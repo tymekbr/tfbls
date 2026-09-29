@@ -9,7 +9,7 @@ from scipy.optimize import minimize
 
 '''
 To run this code, download .pt3 files from Zenodo:
-UPDATE THIS AFTER PUBLISHING
+https://doi.org/10.5281/zenodo.22746116
 '''
 
 
