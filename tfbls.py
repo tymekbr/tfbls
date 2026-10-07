@@ -64,7 +64,8 @@ cmap = matplotlib.colors.LinearSegmentedColormap.from_list("", ['red',
                                                                 'tab:green',
                                                                 'green',
                                                                 'darkgreen'])
-
+def Test():
+    print('It works.')
 
 def ToInch(array):
     '''
@@ -1273,17 +1274,20 @@ def TimeSelector(dataTime,
     return dataTime, modelSignal[indices]+(dataTime-modelTime[indices])*(modelSignal[indices+1]-modelSignal[indices])/(modelTime[indices+1]-modelTime[indices])
 
 def TimeRMS(dataTime,dataSignal,
-            modelTime,modelSignal):
+            modelTime,modelSignal,
+            weights = None):
     '''
     This is a shorthand to calculate the RMS.
     It does not take any parameters and so cannot be used in minimize procedures on its own.
     '''
+    if weights is None:
+        weights = np.zeros(len(dataSignal),dtype = float)+1
     discard, sievedSignal = TimeSelector(dataTime,modelTime,modelSignal)
     if sievedSignal.size != dataSignal.size:
         raise ValueError("size of data ("+str(int(dataSignal.size))+") does not equal the size of sieved model ("+str(int(sievedSignal.size))
                          +"). Something went horribly wrong in the TimeSelector function.")
     else:
-        return np.sum(np.abs(dataSignal-sievedSignal)**2)
+        return np.sum(weights*np.abs(dataSignal-sievedSignal)**2)
     
 
 
