@@ -584,10 +584,12 @@ def CalcSpectrogram(time, signal,
                        scanAmplitude = scanAmplitude,
                        origin = 'model')
 
+'''
+---------------------------------------
+--------   Reading .pt3 file   --------
+---------------------------------------    
+'''
 
-#######################################
-########   Reading .pt3 file   ########
-#######################################    
 def pt3_reader(filename):
     """
     Load raw t3 records and metadata from a PT3 file.
@@ -1110,9 +1112,19 @@ class Spectrogram:
         else:    
             return np.linspace(*self.freqRange,self.freqN), np.sum(self.data,axis = 0)
     def getTime(self,
-                binwidth = 1):
+                binwidth = 1,
+                shutterPercent = 0):
+        #######################################
+        #######################################
+        #######################################
+        #######################################
+        #######################################
+        Y = self.data.copy()
+        if shutterPercent != 0:
+            shutterN = int(np.ceil(self.freqN*shutterPercent/2))
+            Y[:,int(self.freqN/2)-shutterN:int(self.freqN/2)+shutterN] = 0
         if self.origin == "data":
-            cut = np.sum(self.data,axis = 1)
+            cut = np.sum(Y,axis = 1)
             new_timebins_N = int(np.floor(self.timeN/binwidth))
             new_timebins = np.zeros(new_timebins_N,dtype = float)
             idx = np.array([int(i/binwidth) for i in range(self.timeN)])
@@ -1133,7 +1145,7 @@ class Spectrogram:
             new_time = np.linspace(new_bin_dt/2,new_bin_dt/2+(new_timebins_N-1)*new_bin_dt,new_timebins_N)
             return new_time, new_timebins   
         else:
-            return np.linspace(*self.timeRange,self.timeN), np.sum(self.data,axis = 1)
+            return np.linspace(*self.timeRange,self.timeN), np.sum(Y,axis = 1)
     def getTimeSlice(self,
                      freqRange,
                      binwidth = 1,
